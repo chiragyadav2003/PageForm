@@ -2,6 +2,7 @@
 
 import { currentUser } from "@clerk/nextjs"
 import prisma from "@/db/prisma"
+import { formSchema, formSchemaType } from "@/schema/form";
 
 
 //NOTE - define error for "User Not Found"
@@ -46,4 +47,37 @@ export async function GetFormStats() {
         submissionRate,
         bounceRate
     }
+}
+
+
+
+
+export async function CreateFormData(data: formSchemaType) {
+    //NOTE - validate received data, now api will be able to handle data as per form schema
+    const validation = formSchema.safeParse(data)
+    if (!validation.success) {
+        throw new Error("form not valid")
+    }
+
+    const user = await currentUser()
+
+    if (!user) {
+        throw new UserNotFoundErr("user not exist");
+    }
+
+    const { name, description } = data;
+
+    const form = await prisma.form.create({
+        data: {
+            userId: user.id,
+            name,
+            description
+        }
+    })
+
+    if (!form) {
+        throw new Error("Something went wrong")
+    }
+
+    return form.id;
 }
