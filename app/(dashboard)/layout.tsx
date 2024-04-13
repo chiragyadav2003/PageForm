@@ -1,9 +1,12 @@
 import Logo from "@/components/Logo";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { UserButton } from "@clerk/nextjs";
+// import { Skeleton } from "@/components/ui/skeleton";
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+    // const { isLoaded, userId, sessionId, getToken } = useAuth();
+
     return (
         <div className="flex flex-col min-h-screen min-w-full bg-background max-h-screen">
             <nav className="w-screen flex  items-center border-b border-border h-[60px]  ">
@@ -19,3 +22,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
     )
 }
+
+// function SkeletionIcon() {
+//     return (
+//         <Skeleton>
+//             <span className="opacity-0 rounded-full size-3">Hello</span>
+//         </Skeleton>
+//     )
+
+// }
