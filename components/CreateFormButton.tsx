@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import { ImSpinner2 } from "react-icons/im";
 import { Button } from "./ui/button";
 import { CreateFormData } from "@/actions/form";
+import { BsFileEarmarkPlus } from 'react-icons/bs';
 
 
 function CreateFormButton() {
@@ -54,7 +55,13 @@ function CreateFormButton() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button>Create a new form</Button>
+                <Button
+                    variant={"outline"}
+                    className="group border border-primary/20 h-[190px] items-center justify-center flex flex-col hover:border-prismary hover:cursor-pointer border-dashed gap-4 ">
+                    <BsFileEarmarkPlus className=" h-8 w-8 text-muted-foreground
+                    group-hover:text-primary " />
+                    <p className=" font-bold text-xl text-muted-foreground group-hover:text-primary ">Create a new form</p>
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
