@@ -200,7 +200,7 @@ function FormCard({ form }: { form: Form }) {
         }
         {
           !form.published && (
-            <Button asChild className="w-full group mt-2 text-md gap-4">
+            <Button variant={"secondary"} asChild className="w-full group mt-2 text-md gap-4">
               <Link href={`/builder/${form.id}`}>
                 Edit form <FaEdit className="group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:duration-500  " />
               </Link>

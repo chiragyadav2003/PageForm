@@ -26,10 +26,12 @@ import { ImSpinner2 } from "react-icons/im";
 import { Button } from "./ui/button";
 import { CreateFormData } from "@/actions/form";
 import { BsFileEarmarkPlus } from 'react-icons/bs';
+import { useRouter } from "next/navigation";
 
 
 function CreateFormButton() {
     const { toast } = useToast()
+    const router = useRouter()
 
     const form = useForm<formSchemaType>({
         resolver: zodResolver(formSchema)
@@ -42,7 +44,7 @@ function CreateFormButton() {
                 title: "Success",
                 description: "Form created succesfully"
             })
-            console.log("FORMID", formId)
+            router.push(`/builder/${formId}`)
         } catch (error) {
             toast({
                 title: "Error",
