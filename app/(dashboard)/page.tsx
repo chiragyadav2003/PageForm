@@ -1,17 +1,33 @@
-import { GetFormStats } from "@/actions/form"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GetForms, GetFormStats } from "@/actions/form";
+import CreateFormButton from "@/components/CreateFormButton";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Form } from "@prisma/client";
+import { formatDistance } from "date-fns";
 import { Suspense } from "react";
-import { LuView } from "react-icons/lu";
 import { FaWpforms } from "react-icons/fa";
 import { HiCursorClick } from "react-icons/hi";
+import { LuView } from "react-icons/lu";
 import { TbArrowBounce } from "react-icons/tb";
-import { Separator } from "@/components/ui/separator";
-import CreateFormButton from "@/components/CreateFormButton";
+import { BiRightArrowAlt } from "react-icons/bi"
+import { FaEdit } from "react-icons/fa"
+
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="container pt-4">
+    <div className="container py-4 ">
       <Suspense fallback={<StatsCards loading={true} />}>
         <CardStatsWrapper />
       </Suspense>
@@ -22,6 +38,9 @@ export default function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <CreateFormButton />
+        <Suspense fallback={[1, 2, 3].map(el => <FormCardSkeleton key={el} />)}>
+          <FormCards />
+        </Suspense>
       </div>
 
     </div>
@@ -114,6 +133,81 @@ function StatsCard({ title, icon, helperText, value, loading, className }: Stats
         </div>
         <p className="text-xs text-muted-foreground pt-1">{helperText}</p>
       </CardContent>
+    </Card>
+  )
+}
+
+
+function FormCardSkeleton() {
+  return (
+    <Skeleton className="border-2 border-primary/20 h-[190px] w-full" />
+  )
+}
+
+async function FormCards() {
+  const forms = await GetForms()
+  return (
+    <>
+      {forms.map((form) => (
+        <FormCard key={form.id} form={form} />
+      ))}
+    </>
+  )
+}
+
+function FormCard({ form }: { form: Form }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 justify-between">
+          <span className="truncate font-bold ">
+            {form.name}
+          </span>
+          {form.published && <Badge className=" bg-blue-700 text-white ">Published</Badge>}
+          {!form.published && <Badge variant={"destructive"}>Draft</Badge>}
+        </CardTitle>
+        <CardDescription className="flex items-center justify-between text-muted-foreground text-sm">
+          {/* NOTE - date modification */}
+          {
+            formatDistance(form.createdAt, new Date(), {
+              addSuffix: true
+            })
+          }
+          {
+            !form.published && (
+              <span className="flex items-center gap-2">
+                <LuView className=" text-muted-foreground " />
+                <span>{form.visits.toLocaleString()}</span>
+                <FaWpforms className=" text-muted-foreground " />
+                <span>{form.submissions.toLocaleString()}</span>
+              </span>
+            )
+          }
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="h-[20px] truncate text-muted-foreground text-sm ">
+        {form.description || "No description"}
+      </CardContent>
+      <CardFooter>
+        {
+          form.published && (
+            <Button asChild className="w-full group mt-2 text-md gap-4">
+              <Link href={`/forms/${form.id}`}>
+                View submissions <BiRightArrowAlt className=" group-hover:translate-x-2 group-hover:duration-500  " />
+              </Link>
+            </Button>
+          )
+        }
+        {
+          !form.published && (
+            <Button asChild className="w-full group mt-2 text-md gap-4">
+              <Link href={`/builder/${form.id}`}>
+                Edit form <FaEdit className="group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:duration-500  " />
+              </Link>
+            </Button>
+          )
+        }
+      </CardFooter>
     </Card>
   )
 }
